@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <th th:fragment="column_link(pageName, fieldName, columnLabel, removeTag)" th:remove="${removeTag}">
+        <a th:href="@{'/' + ${pageName} + '/page/' + ${currentPage} + '?sortField=' + ${fieldName} + '&sortDir=' + ${reverseSortDir}
+                        + '&keyword=' + ${keyword} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+            style="text-decoration: none; color: white;">
+            [[${columnLabel}]]
+        </a>
+        <span th:if="${sortField == fieldName}"
+            th:class="${sortDir == 'asc'? 'fas fa-sort-up' : 'fas fa-sort-down'}"
+            style="padding-left: 10px;">
+        </span>
+    </th>
+
+    <a th:fragment="page_link(pageName, page)"
+       class="page-link" 
+       th:href="@{'/' + ${pageName} + '/page/' + ${page} + '?sortField='+ ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword}
+       				 + ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+    >
+        [[${page}]]
+    </a>
+    
+    
+    <a th:fragment="page_words_link(pageName, page, word)"
+       class="page-link" 
+       th:href="@{'/' + ${pageName} + '/page/' + ${page} + '?sortField='+ ${sortField} + '&sortDir=' + ${sortDir} + '&keyword=' + ${keyword}
+       				+ ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+    >
+        [[${word}]]
+    </a>
+</body>
+</html>

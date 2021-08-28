@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <th th:fragment="content">
+    
+    <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	    <div id="divProductDetails">
+	    
+	    	<th:block th:each="detail, status : ${product.details}">
+	    		<div class="form-inline" th:id="'divDetail' + ${status.index}">
+	    			<input type="hidden" name="detailIDs" th:value="${detail.id}" />
+		            <label class="m-3">Name:</label>
+		            <input type="text" class="form-control w-25" name="detailNames" maxlength="255"
+		            	th:value="${detail.name}"/>
+		
+		            <label class="m-3">Value:</label>
+		            <input type="text" class="form-control w-25" name="detailValues" maxlength="255"
+		            	th:value="${detail.value}"/>
+	            	<a name="linkRemoveDetail" class="btn fas fa-times-circle float-right"
+							title="Remove this detail"></a>
+		        </div>
+	    	</th:block>
+	    	<div class="form-inline" th:id="'divDetail' + ${#lists.size(product.details)}">
+	    		<input type="hidden" name="detailIDs" th:value="0" />
+	            <label class="m-3">Name:</label>
+	            <input type="text" class="form-control w-25" name="detailNames" maxlength="255"/>
+	
+	            <label class="m-3">Value:</label>
+	            <input type="text" class="form-control w-25" name="detailValues" maxlength="255"/>
+	        </div>
+	    </div>
+	    
+    </th:block>
+    
+    <th:block sec:authorize="hasAnyAuthority('Salesperson')">
+    
+    	<div>
+	  		<table class="table table-striped table-bordered table-hover"
+	  				style="max-width: 1000px; margin: 0 auto;" >
+	  			<thead class="thead-dark">
+	  				<tr>
+	  					<th style="width: 40%;">Name</th>
+						<th>Value</th>
+	  				</tr>
+	  			</thead>
+	  			<tbody>
+	  				<tr th:each="detail : ${product.details}">
+	  					<td>[[${detail.name}]]</td>
+	  					<td>[[${detail.value}]]</td>
+	  				</tr>
+	  			</tbody>
+	  		</table>
+	  	</div>
+    
+    </th:block>
+    </th>
+</body>
+</html>

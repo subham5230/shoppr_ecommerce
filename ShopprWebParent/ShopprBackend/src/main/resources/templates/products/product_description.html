@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <th th:fragment="content" th:remove="tag">
+    
+    	<div class="m-2">
+    		<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	    		<label>Short Description:</label>
+	    		<textarea class="form-control" th:field="*{shortDescription}" rows="5" required></textarea>
+    		</th:block>
+    		
+    		<th:block sec:authorize="hasAnyAuthority('Salesperson')">
+    			<div class="m-2">
+		    		<label>Short Description:</label>
+		    		<div th:utext="${product.shortDescription}" class="border p-2 m-2"></div>
+		    	</div>
+    		</th:block>
+    	</div>
+    	<div class="m-2">
+    		<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	    		<label>Full Description:</label>
+	    		<textarea class="form-control" th:field="*{fullDescription}" rows="10" required></textarea>
+    		</th:block>
+    		
+    		<th:block sec:authorize="hasAnyAuthority('Salesperson')">
+    			<div class="m-2">
+		    		<label>Full Description:</label>
+		    		<div th:utext="${product.fullDescription}" class="border p-2 m-2"></div>
+		    	</div>
+    		</th:block>
+    	</div>
+    </th>
+</body>
+</html>

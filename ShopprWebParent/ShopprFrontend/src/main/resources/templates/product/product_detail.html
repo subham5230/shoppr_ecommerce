@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xlmns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Home | Shoppr</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+
+            <div th:replace="navigation :: menu"></div>
+           	
+           	 <div th:replace="breadcrumb :: content"></div>
+           	 
+            <div class="p-3">
+                <p>[[${pageTitle}]]</p>
+            </div>
+            
+        	<div class="container-fluid">
+            <div class="row" style="margin-top:10px">
+           
+           
+           		<div class="col-sm text-center p-2">
+           		
+           			<img id="bigImage" th:src="@{${product.getImagePath}}" class="img-fluid"
+           				 style="max-width: 80%; max-height: 350px;"/>
+           				 
+       				 <div class="row justify-content-center">
+       				 	<div class="m-2 p-1 border">
+       				 		<img class="image-thumbnail" th:src="@{${product.getImagePath}}"
+       				 			 index="0" style="height: 50px;"/>
+       				 	</div>
+       				 	<th:block th:each="extraImage, status: ${product.images}">
+       				 		<div class="m-1 p-1 border">
+	       				 		<img class="image-thumbnail" th:src="@{${extraImage.imagePath}}"
+	       				 			 th:index="${status.count}" style="height: 50px;"/>
+	       				 	</div>
+       				 	</th:block>
+       				 </div>
+           				 
+           		</div>
+           		
+           		
+           		<div class="col-sm">
+           		
+           			<div>
+	           			<h3>[[${product.name}]]</h3>
+	           		</div>
+	           		<div>
+	           			<span>Brand: [[${product.brand.name}]]</span>
+	           		</div>
+	           		
+	           		<div>
+	           			List Price:
+        				<span th:if="${product.discountPercent <= 0}">
+        					<strong>&#8377; [[${product.price * 75}]]</strong>
+    					</span>
+        				<del th:if="${product.discountPercent > 0}" style="color:gray">
+        				<span>
+        					&#8377; [[${product.price * 75}]]
+    					</span>
+    					</del>
+        			</div>
+        			
+        			<div th:if="${product.discountPercent > 0}" style="font-size: 1.1rem;">
+        				Price:
+        				<span style="color:rgb(24, 139, 41)">
+        					<strong>&#8377; [[${product.discountPrice * 75}]]</strong>
+    					</span>
+    					([[${product.discountPercent}]]% off)
+        			</div>
+        			
+        			<div>&nbsp;</div>
+        			
+        			<div th:utext="${product.shortDescription}"></div>
+        			
+        			
+           		</div>
+           		
+           		<div class="col-sm-2">
+           		
+           			<div style="font-size: 1.1rem;">
+						<span th:if="${product.inStock}" class="text-success">
+							<strong>In Stock</strong>
+						</span>  
+						<span th:unless="${product.inStock}" class="text-danger">
+							<strong>Out of Stock</strong>
+						</span>         			
+           			</div>
+           		
+           			<div class="mt-2">
+           				<input type="number" size="4" value="1" step="1" min="1" max="5"/>
+           			</div>
+           			
+           			<div class="mt-2">
+           				<input class="btn btn-primary" type="button" value="Add to Cart" />
+           			</div>
+           			
+           		</div>
+           		
+             </div>
+        	</div>
+       
+       		<div class="container-fluid">
+       		<div><hr/></div>
+           
+            <div class="row p-2">
+            
+           		<div class="col-sm-8">
+           		
+           			<div>
+           				<h3>Product Description: </h3>
+           			</div>
+           			<div class="rounded p-3 border-secondary" th:utext="${product.fullDescription}" 
+           				style=" max-height: 400px;
+   								overflow-y: scroll;
+   			 					border: 2px solid;">
+					</div>
+           		</div>
+           		
+           		<div class="col-sm-4">
+           			<div>
+           				<h3>Product Specifications: </h3>
+           			</div>
+           			<th:block th:each="detail : ${product.details}">
+           				<div>
+           					<strong>[[${detail.name}]] : </strong>
+           					<span>[[${detail.value}]]</span>
+           				</div>
+           			</th:block>
+           		</div>
+           		
+            </div>
+       		</div>
+           
+           <div th:replace="product/images_carousel :: content"></div>
+            
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+        
+        
+        <script type="text/javascript">
+        	
+        	bigImage = $("#bigImage")
+        
+        	$(document).ready(function(){
+	
+				$(".image-thumbnail").mouseover(function(){
+					currentImageSource = $(this).attr("src")
+					currentImageIndex = $(this).attr("index")
+					
+					bigImage.attr("src", currentImageSource)
+					bigImage.attr("index", currentImageIndex)
+				})
+				
+				bigImage.on("click", function(){
+					$("#carouselModal").modal("show")
+					imageIndex = parseInt(bigImage.attr("index"))
+					$("#carouselExampleIndicators").carousel(imageIndex)
+				})
+			})
+        
+        </script>
+        
+    </body>
+</html>

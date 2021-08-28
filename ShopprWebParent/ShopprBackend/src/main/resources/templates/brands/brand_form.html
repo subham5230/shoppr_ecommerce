@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Create Brand | Shoppr Admin</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+			
+			<div th:replace="navigation :: menu"></div>
+            <div>
+                <h1>[[${pageTitle}]]</h1>
+            </div>
+
+            <div id="alert_placeholder">
+
+            </div>
+            <form 
+                    th:action="@{/brands/save}" 
+                    method="POST" 
+                    style="max-width: 500px; margin: 0 auto;" 
+                    th:object="${brand}"
+                    onsubmit="return handleBrandSubmit(this);"
+            		enctype="multipart/form-data"
+            >
+            	<input type="hidden" th:field="*{id}" />
+                <div class="border border-secondary rounded p-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Brand Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="name" class="form-control" th:field="*{name}" required
+                               minlength="3"
+                               maxlength="128"/>
+                        </div>
+                    </div>
+                   
+                   
+                   <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Logo:</label>
+                        <div class="col-sm-8" style="padding: 8px 0 0 23px;">
+                        	<input type="hidden" th:field="*{logo}" />
+                            <input th:if="${brand.getLogo == null}" type="file" id="fileImage" name="profile-image" accept="image/png, image/jpg, image/jpeg"
+                            		class="mb-2" required/>
+                    		<input th:if="${brand.getLogo != null}" type="file" id="fileImage" name="profile-image" accept="image/png, image/jpg, image/jpeg"
+                    				class="mb-2"/>
+                            <image id="thumbnail" alt="Photo" th:src="@{${brand.getImagePath}}"
+                            		class="image-fluid" style="max-width: 100px" />
+                        </div>
+                    </div>
+                
+
+					<div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Select one or more categories:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" th:field="*{categories}" multiple required
+                            		style="resize: vertical; height:200px;">
+                            	<th:block th:each="category : ${listCategoriesForm}">
+                            		<option th:value="${category.id}">[[${category.name}]]</option>
+                            	</th:block>
+                            </select>
+                        </div>
+                    </div>
+				
+					<div class="form-group-row">
+						<label class="col-sm-3 col-form-label">Chosen Categories:</label>
+						<div id="chosenCategories">
+							<th:block th:each="category : ${brand.categories}">
+                            		<span class="badge badge-secondary" 
+                            			  th:text="${category.name}"></span>
+                            	</th:block>
+						</div>
+					</div>
+
+                    <div class="text-center">
+                        <input type="submit" value="Save" class="btn btn-primary m-3" />
+                        <input type="button" value="Cancel" class="btn btn-secondary" onclick="handleCancel()"/>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+       
+       
+        <script type="text/javascript">
+        	
+        	checkBrandUrl="[[@{/brands/check_name}]]"
+        	
+        	function handleCancel(){
+			    window.location = "[[@{/brands}]]"
+			}
+			
+			$(document).ready(function(){
+				dropdownCategories = $("#categories")
+				divChosenCategories = $("#chosenCategories")
+				
+				dropdownCategories.change(function(){
+					divChosenCategories.empty()
+					showChosenCategories()
+				})
+			})
+			
+			function showChosenCategories(){
+				dropdownCategories.children("option:selected").each(function(){
+					selectedCategory = $(this)
+					catId = selectedCategory.val();
+					catName = selectedCategory.text().replace(/-/g, "");
+					
+					divChosenCategories.append("<span class='badge badge-secondary' style='margin-right:5px;'>" 
+												+ catName + "</span>")
+				})
+			}
+			
+        </script>
+        <script type="text/javascript" th:src="@{/js/common_form.js}"></script>
+    </body>
+</html>

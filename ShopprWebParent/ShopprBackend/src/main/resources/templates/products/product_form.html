@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Create Product | Shoppr Admin</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+        
+        <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}" />
+        <script type="text/javascript" th:src="@{/richtext/jquery.richtext.min.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+			
+			<div th:replace="navigation :: menu"></div>
+            <div>
+                <h1>[[${pageTitle}]]</h1>
+            </div>
+
+            <div id="alert_placeholder">
+
+            </div>
+            <form 
+                    th:action="@{/products/save}" 
+                    method="POST" 
+                    style="max-width: 900px; margin: 0 auto;" 
+                    th:object="${product}"
+                    enctype="multipart/form-data"
+                    onsubmit="return handleProductSubmit(this);"
+            >
+            	<input type="hidden" th:field="*{id}" />
+            	<input th:if="${product.category != null}" type="hidden" id="categoryId" th:value="${product.category.id}" />
+            	
+            	<ul class="nav nav-tabs" id="myTab" role="tablist">
+				  <li class="nav-item">
+				    <a class="nav-link active" data-toggle="tab" href="#overview" role="tab">Overview</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" data-toggle="tab" href="#description" role="tab">Description</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" data-toggle="tab" href="#images" role="tab">Images</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" data-toggle="tab" href="#shipping" role="tab">Shipping</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" data-toggle="tab" href="#details" role="tab">Details</a>
+				  </li>
+				</ul>
+				
+				<!-- Tab panes -->
+				<div class="tab-content">
+				  <div class="tab-pane active p-3" id="overview" role="tabpanel">
+				  	<div th:replace="products/product_overview :: content"></div>
+				  </div>
+				  
+				  <div class="tab-pane p-3" id="description" role="tabpanel">
+				  	<div th:replace="products/product_description :: content"></div>
+				  </div>
+				  
+				  <div class="tab-pane p-3" id="images" role="tabpanel">
+				  	<div th:replace="products/product_images :: content"></div>
+				  </div>
+				  
+				  <div class="tab-pane p-3" id="shipping" role="tabpanel">
+				  	<div th:replace="products/product_shipping :: content"></div>
+				  </div>
+				  
+				 <div class="tab-pane p-3" id="details" role="tabpanel">
+				  	<div th:replace="products/product_details :: content"></div>
+				  	<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+					  	<input type="button" value="Add Another Detail"
+					  		 class="btn btn-secondary" onclick="addNextDetailSection()"/>
+				  	</th:block>
+				  </div>
+				</div>
+				
+				 <div class="text-center">
+		            <input type="submit" value="Save" class="btn btn-primary m-3" />
+		            <input type="button" value="Cancel" class="btn btn-secondary" onclick="handleCancel()"/>
+		        </div>
+                
+            </form>
+            
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+       
+       
+        <script type="text/javascript">
+			
+			checkProductUrl="[[@{/products/check_name}]]"
+			brandModuleUrl = "[[@{/brands}]]"
+			defaultImageThumbnailUrl = "[[@{'/images/image-thumbnail.png'}]]"
+			
+			function handleCancel(){
+			    window.location = "[[@{/products}]]"
+			}
+			
+        </script>
+        <script type="text/javascript" th:src="@{/js/common_form.js}"></script>
+        <script type="text/javascript" th:src="@{/js/product/product_form.js}"></script>
+        <script type="text/javascript" th:src="@{/js/product/product_overview.js}"></script>
+        <script type="text/javascript" th:src="@{/js/product/product_description.js}"></script>
+        <script type="text/javascript" th:src="@{/js/product/product_images.js}"></script>
+        <script type="text/javascript" th:src="@{/js/product/product_details.js}"></script>
+    </body>
+</html>

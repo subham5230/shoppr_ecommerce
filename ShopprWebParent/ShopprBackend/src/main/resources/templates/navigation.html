@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xlmns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="menu">
+		<form th:action="@{/logout}" method="POST" th:hidden="true" name="logoutForm">
+            		<input type="submit" />
+    	</form>
+        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+            <a class="navbar-brand" th:href="@{/}"><h2>Shoppr</h2></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="topNavbar">
+                <ul class="navbar-nav">
+	                <th:block sec:authorize="hasAnyAuthority('Admin')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/users}">Users</a>
+	                    </li>
+	                </th:block>
+	                
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/categories}">Categories</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/brands}">Brands</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson', 'Shipper')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/products}">Products</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/customers}">Customers</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Salesperson', 'Shipper')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/orders}">Orders</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/reports}">Sales Reports</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/articles}">Articles</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/menus}">Menus</a>
+	                    </li>
+	                </th:block>
+                    
+					<th:block sec:authorize="hasAnyAuthority('Admin')">
+	                	<li class="nav-item">
+	                        <a class="nav-link" th:href="@{/settings}">Settings</a>
+	                    </li>
+	                </th:block>
+                
+				</ul>
+				<ul class="navbar-nav ml-auto">
+                    <li>
+                    	<span class="fas fa-user fa-2x" style="color: lightgrey"></span>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                    	<a class="nav-link dropdown-toggle" 
+                    		data-toggle="dropdown"
+                    		href=""
+                    	sec:authentication="principal.fullname"></a>
+                    	
+                    	<div class="dropdown-menu">
+                    		<a class="dropdown-item" id="view-profile" th:href="@{/account}">View Profile</a>
+                    		<a class="dropdown-item" id="logout-link" href="">Logout</a>
+                    	</div>
+					</li>
+                </ul>
+            </div>
+        </nav>
+	</div>
+
+
+</body>
+</html>

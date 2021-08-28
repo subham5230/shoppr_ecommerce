@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Products | Shoppr Admin</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/all.css}" />
+        <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+			
+			<div th:replace="navigation :: menu"></div>
+            <div>
+                <h1>[[${pageTitle}]]</h1>
+            </div>
+            
+             <div class="row">
+             	
+            	<div class="col-md-4">
+	            	<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	            		<button class="btn btn-primary my-3" onclick="handleCreateProduct()">Create New Product</button>
+	            	</th:block>
+            	</div>
+             	
+            	<div class="col-md-8">
+	            	<form th:action="@{/products/page/1}" class="form-inline  float-md-right" id="searchForm">
+	            		<input type="hidden" name="sortField" th:value="${sortField}" />
+	            		<input type="hidden" name="sortDir" th:value="${sortDir}" />
+	            		
+	            		Category:&nbsp;
+	            		<select class="form-control" name="categoryId" id="dropdownCategory">
+                        	<option value="0">All Categories</option>
+                        	<th:block th:each="category : ${listCategories}">
+                        		<option th:value="${category.id}" th:selected="(${categoryId} == ${category.id})">
+                        			[[${category.name}]]
+                    			</option>
+                        	</th:block>
+                        </select>
+	            		&nbsp;&nbsp;
+	            		<div>
+		            		<span>Filter:</span>
+		            		<input type="search" name="keyword" class="form-control" th:value="${keyword}"/>
+		            		&nbsp;&nbsp;
+		            		<input type="submit" value="Search" class="btn btn-primary my-3" />
+		            		&nbsp;
+		            		<input type="button" id="clearSearch" value="Clear" class="btn btn-secondary" /> 
+	            		</div>
+	            		
+	            	</form>
+	            </div>
+            </div>
+            
+             <div th:if="${product_message != null}" class = "alert alert-success text-center" role="alert" 
+            		style="margin-top: 15px;">
+            	[[${product_message}]]
+                <button type="button" class="close text-right" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="full-details text-center" style = "margin-top: 15px;">
+                <table class="table table-bordered table-striped table-hover table-responsive-xl ">
+                    <thead class="thead-dark">
+                    	<th class="hideable-column">
+                    		<th th:replace="fragments :: column_link('products', 'id', 'ID', 'tag')" />
+                    	</th>
+                        <th>Main Image</th>
+                        <th th:replace="fragments :: column_link('products', 'name', 'Product Name', 'none')" />
+                        <th class="hideable-column">Brand</th>
+                        <th class="hideable-column">Category</th>
+                        <th th:replace="fragments :: column_link('products', 'enabled', 'Enabled', 'none')" />
+                        <th></th>
+                        
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="product : ${listProducts}">
+                            <td class="hideable-column">[[${product.id}]]</td>
+                            <td class="text-center">
+                            	<image th:if="${product.mainImage != null}" th:src="@{${product.getImagePath}}"
+                            		style="width:100px; " />
+                        	</td>
+         
+                            <td>
+                            	<a  class="link-detail"
+                            		th:href="@{'/products/detail/' + ${product.id}}"
+                            		th:title="${product.name}"
+                            		style = "text-decoration: none;">
+                            		[[${product.shortName}]]
+                            	</a>
+                        	</td>
+                            <td class="hideable-column">[[${product.brand}]]</td>
+                            <td class="hideable-column">[[${product.category}]]</td>
+                            
+                             <td class="text-center">
+                            	<a 
+                            		th:if="${product.enabled == true}" 
+                            		class="fas fa-check-circle" 
+                            		style = "font-size:150%; 
+                        			   		 color:mediumseagreen;
+                        			   		 text-decoration: none;"
+            			   		 	th:href="@{'/products/' + ${product.id} + '/enabled/false' +
+            			   		 		'?currentPage=' + ${currentPage} +
+                			   			'&sortField=' + ${sortField} + 
+                			   			'&sortDir=' + ${sortDir} + '&keyword=' + ${keyword}+ ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+            			   		 	title = "Disable this product"
+            			   		 >
+                            	</a>
+                            	<a 
+                            		th:if="${product.enabled == false}" 
+                            		class="fas fa-times-circle" 
+                            		style = "font-size:150%; 
+                        			   		 color:gray;
+                        			   		 text-decoration: none;"
+            			   		 	th:href="@{'/products/' + ${product.id} + '/enabled/true' +
+            			   		 		'?currentPage=' + ${currentPage} +
+                			   			'&sortField=' + ${sortField} + 
+                			   			'&sortDir=' + ${sortDir} + '&keyword=' + ${keyword}+ ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+            			   		 	title = "Enable this product"
+            			   		 >
+                            	</a>
+                        	</td>
+                            
+                            <td class="text-center">
+                            <a class="fas fa-file-alt side-buttons link-detail" 
+                            		style="font-size:150%; 
+                            			   color: grey;
+                            			   text-decoration: none;"
+                    			   title="View this product" 
+                    			  th:href="@{'/products/detail/' + ${product.id}}"
+                			   >
+                				</a> 
+                				<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson')">
+	                            	&nbsp;
+	                            	<a class="fas fa-edit side-buttons" 
+	                            		style="font-size:150%; 
+	                            			   color: steelblue;
+	                            			   text-decoration: none;"
+	                    			   title="Edit this product" 
+	                    			  th:href="@{'/products/edit/' + ${product.id}}"
+	                			   >
+	                				</a> 
+                				</th:block>
+                				<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                            	&nbsp; 
+	                            	<a 
+	                            		class="fas fa-trash link-delete side-buttons" 
+	                            		style="font-size:150%; 
+	                            			   color:tomato;
+	                            			   text-decoration: none;"
+	                    			   	title="Delete this product"
+	                    			   	th:href="@{'/products/delete/' + ${product.id} + '?currentPage=' + ${currentPage} +
+	                			   			'&sortField=' + ${sortField} + 
+	                			   			'&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+	                			   	>
+	                        		</a>
+                				</th:block>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="less-details">
+				<div th:each="product : ${listProducts}" class="row" style="margin-bottom: 10px;">
+					<div class="col-4 text-center">
+
+                    	<image th:src="@{${product.getImagePath}}"
+                    		style="width:100px; " />
+					</div>
+					<div class="col-8">
+						<div>
+							<a  class="link-detail"
+                        		th:href="@{'/products/detail/' + ${product.id}}"
+                        		th:title="${product.name}"
+                        		style = "text-decoration: none;">
+                        		[[${product.shortName}]]
+                        	</a>
+                    	</div>
+						<div style="margin-top: 10px;">
+							<a class="fas fa-file-alt side-buttons link-detail" 
+                            		style="font-size:150%; 
+                            			   color: grey;
+                            			   text-decoration: none;"
+                    			   title="View this product" 
+                    			  th:href="@{'/products/detail/' + ${product.id}}"
+                			   >
+                				</a> 
+                				<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson')">
+	                            	&nbsp;
+	                            	<a class="fas fa-edit side-buttons" 
+	                            		style="font-size:150%; 
+	                            			   color: steelblue;
+	                            			   text-decoration: none;"
+	                    			   title="Edit this product" 
+	                    			  th:href="@{'/products/edit/' + ${product.id}}"
+	                			   >
+	                				</a> 
+                				</th:block>
+                				<th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+	                            	&nbsp; 
+	                            	<a 
+	                            		class="fas fa-trash link-delete side-buttons" 
+	                            		style="font-size:150%; 
+	                            			   color:tomato;
+	                            			   text-decoration: none;"
+	                    			   	title="Delete this product"
+	                    			   	th:href="@{'/products/delete/' + ${product.id} + '?currentPage=' + ${currentPage} +
+	                			   			'&sortField=' + ${sortField} + 
+	                			   			'&sortDir=' + ${sortDir} + '&keyword=' + ${keyword} + ${categoryId != null ? '&categoryId=' + categoryId : ''}}"
+	                			   	>
+	                        		</a>
+                				</th:block>
+
+                        	
+						</div>
+					</div>
+				</div>
+			</div>
+            
+            <div class="text-center m-1" th:if="${(totalItems > 0) && (currentPage<=totalPages)}">
+                <span>Showing products from: [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+            </div>
+            <div class="text-center m-1" th:if="${(totalItems <= 0) || (currentPage>totalPages)}">
+                <span><h3>No Products Found.</h3></span>
+            </div>
+
+			<div th:if="${(totalItems > 0) && (currentPage<=totalPages)}">
+				<nav>
+				  <ul class="pagination justify-content-center flex-wrap">
+				  	<li th:class="${currentPage > 1? 'page-item': 'page-item disabled'}">
+						<a th:replace="fragments :: page_words_link('products', '1', 'First')"/>
+			  		</li>
+				    <li th:class="${currentPage > 1? 'page-item': 'page-item disabled'}">
+				    	<a th:replace="fragments :: page_words_link('products', ${currentPage-1}, 'Previous')"/>
+			    	</li>
+			    	<li th:if="${currentPage-1>1}" class="page-item">
+				    	<a th:replace="fragments :: page_link('products', ${currentPage-2})"/>
+			    	</li>
+	    		 	<li th:if="${currentPage>1}" class="page-item">
+	    		 		<a th:replace="fragments :: page_link('products', ${currentPage-1})"/>
+		 			</li>
+				    <li class="page-item active">
+				    	<a th:replace="fragments :: page_link('products', ${currentPage})"/>
+			    	</li>
+				    <li th:if="${currentPage<totalPages}" class="page-item">
+				    	<a th:replace="fragments :: page_link('products', ${currentPage+1})"/>
+			    	</li>
+			    	<li th:if="${currentPage+1<totalPages}" class="page-item">
+				    	<a th:replace="fragments :: page_link('products', ${currentPage+2})"/>
+			    	</li>			    	
+				    <li th:class="${currentPage < totalPages? 'page-item': 'page-item disabled'}">
+				    	<a th:replace="fragments :: page_words_link('products', ${currentPage+1}, 'Next')"/>
+			    	</li>
+			    	<li th:class="${currentPage < totalPages? 'page-item': 'page-item disabled'}">
+			    		<a th:replace="fragments :: page_words_link('products', ${totalPages}, 'Last')"/>
+		    		</li>
+				  </ul>
+				</nav>
+			</div>
+
+            <div class="modal fade text-center" id="confirmModal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Delete Confirmation</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure you want to delete this product?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <a type="button" class="btn btn-danger" id="delButton" href="">Delete</a>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            
+            <div class="modal fade" id="detailModal">
+            	<div class="modal-dialog modal-xl">
+            		<div class="modal-content">
+            		</div>
+            	</div>
+            </div>
+              
+
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+            
+            
+            <script>
+	        $(document).ready(function(){
+				
+				$("#clearSearch").on("click", function(e){
+							
+						window.location = "[[@{/products}]]";
+				})
+				
+				$(".link-delete").on("click", function(e){
+			        e.preventDefault();
+					
+					link = $(this)
+					
+					$("#delButton").attr("href", link.attr("href"));
+			        $("#confirmModal").modal();
+			        
+			    })
+			    
+			    $(".link-detail").on("click", function(e){
+				
+					e.preventDefault()
+					linkDetailUrl = $(this).attr("href")
+					$("#detailModal").modal("show").find(".modal-content").load(linkDetailUrl)
+				})
+				
+				 $("#dropdownCategory").on("change", function(){
+				
+					$("#searchForm").submit()
+				})
+				
+			})
+        	
+			function handleCreateProduct(){
+			    window.location = "[[@{/products/new}]]"
+			}
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+@media screen and (max-width: 768px){
+	/* small screen */
+	div.full-details{
+		display: none;
+	}
+	
+	div.less-details{
+		display: block;
+	}
+	
+	#confirmModal{
+		padding-top:60%;
+	}
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px){
+	/* medium screen */
+	div.full-details{
+		display: block;
+	}
+	.table {
+	    margin: auto;
+   		width: 80.62%; 
+	}
+	.side-buttons{
+		display:block;
+	}
+	div.less-details{
+		display: none;
+	}
+	.hideable-column{
+		display: none;
+	}
+	
+	#confirmModal{
+		padding-top:40%;
+	}
+}
+
+@media screen and (min-width: 1024px){
+	/* large screen */
+	
+	div.less-details{
+		display: none;
+	}
+	
+	#confirmModal{
+		padding-top:10%;
+	}
+	
+	#login-form{
+		padding-top: 10%;
+	}
+}

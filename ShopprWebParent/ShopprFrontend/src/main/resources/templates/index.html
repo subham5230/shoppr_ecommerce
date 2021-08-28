@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xlmns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Home | Shoppr</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+
+            <div th:replace="navigation :: menu"></div>
+            
+            <div th:replace="navigation :: search_nav"></div>
+            
+            <div class="p-3">
+                <h3>Shop By Categories</h3>
+            </div>
+            <div class="row justify-content-center">
+            	<div class="col-sm-2 border p-1 m-1 text-center" th:each="category : ${listCategories}">
+	            	<a th:href="@{'/c/' + ${category.alias}}" style="text-decoration:none; color:black;">
+	            		<div>
+	            			<img th:src="@{${category.getImagePath}}" style="max-width:80px" class="img-fluid"/>
+	        			</div>
+	            		<div class="mt-2">
+	            			<strong>
+	            				[[${category.name}]]
+	        				</strong>
+	        			</div>
+	            	</a>
+            	</div>
+            </div>
+            
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+        
+    </body>
+</html>

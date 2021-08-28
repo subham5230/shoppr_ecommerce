@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <th th:fragment="content" th:remove="tag">
+    
+    <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+    	<div class="row" id="divProductImages">
+    		<div class="col border m-3 p-2">
+    			<div><label>Main Image:</label></div>
+	    		<div class="m-2">
+	    			<image id="thumbnail" class="img-fluid" alt="Main image preview" 
+	    				th:src="@{${product.getImagePath}}"
+	            		style="width:200px; " />
+	    		</div>
+	    		<div>
+	    			<input type="file" id="fileImage" name="profile-image"
+	    			th:required="${product.mainImage == null}"
+	    			accept="image/png, image/jpeg, image/jpg"/>
+	    		</div>
+	    		<input type="hidden" th:field="*{mainImage}" />
+    		</div>
+    		
+    		<th:block th:each="productImage, status : ${product.images}">
+	    		<div class="col border m-3 p-2" th:id="'divExtraImage' + ${status.index}">
+	    			<div>
+	    				<label>Extra Image [[${status.index + 1}]]:</label>
+    					<a name="linkRemoveExtraImage" class="btn fas fa-times-circle float-right"
+							title="Remove this image"></a>
+    				</div>
+		    		<div class="m-2">
+		    			<image th:id="'extraThumbnail' + ${status.index}" class="img-fluid" alt="Extra image preview"
+		    				th:src="@{${productImage.getImagePath}}"
+		            		style="width:200px; " />
+		    		</div>
+		    		<div>
+		    			<input type="file" name="extraImage"
+		    			accept="image/png, image/jpeg, image/jpg"/>
+		    		</div>
+		    		<input type="hidden" name="imageIDs" th:id="'imageId' + ${status.index}" 
+		    			th:value="${productImage.id}"/>
+		    		<input type="hidden" name="imageNames" th:id="'imageName' + ${status.index}"
+		    			th:value="${productImage.name}" />
+		    		
+	    		</div>
+    		</th:block>
+    		
+    		<div class="col border m-3 p-2" th:id="'divExtraImage' + ${numberOfExistingExtraImages}">
+    			<div th:id="'extraImageHeader' + ${numberOfExistingExtraImages}"><label>Extra Image [[${numberOfExistingExtraImages + 1}]]:</label></div>
+	    		<div class="m-2">
+	    			<image th:id="'extraThumbnail' + ${numberOfExistingExtraImages}" class="img-fluid" alt="Extra image preview" th:src="@{'/images/image-thumbnail.png'}"
+	            		style="width:200px; " />
+	    		</div>
+	    		<div>
+	    			<input type="file" name="extraImage"
+	    			accept="image/png, image/jpeg, image/jpg"/>
+	    		</div>
+    		</div>
+    	</div>
+    	
+    </th:block>
+    
+    <th:block sec:authorize="hasAnyAuthority('Salesperson')">
+    
+    	<div class="row">
+    		<div class="col-3 border m-3 p-2">
+    			<div><label>Main Image:</label></div>
+	    		<div class="m-2">
+	    			<image class="img-fluid" alt="Main image preview" 
+	    				th:src="@{${product.getImagePath}}"
+	            		style="width:200px; " />
+	    		</div>
+    		</div>
+    		
+    		<th:block th:each="productImage, status : ${product.images}">
+	    		<div class="col-3 border m-3 p-2">
+	    			<div>
+	    				<label>Extra Image [[${status.index + 1}]]:</label>
+    				</div>
+		    		<div class="m-2">
+		    			<image class="img-fluid" alt="Extra image preview"
+		    				th:src="@{${productImage.getImagePath}}"
+		            		style="width:200px; " />
+		    		</div>
+	    		</div>
+    		</th:block>
+	  	</div>
+    
+    </th:block>
+    </th>
+</body>
+</html>

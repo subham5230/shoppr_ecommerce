@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, intial-scale=1.0, minimum-scale=1.0">
+
+        <title>Create Category | Shoppr Admin</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+			
+			<div th:replace="navigation :: menu"></div>
+            <div>
+                <h1>[[${pageTitle}]]</h1>
+            </div>
+
+            <div id="alert_placeholder">
+
+            </div>
+            <form 
+                    th:action="@{/categories/save}" 
+                    method="POST" 
+                    style="max-width: 500px; margin: 0 auto;" 
+                    th:object="${category}"
+                    onsubmit="return handleCategorySubmit(this);"
+            		enctype="multipart/form-data"
+            >
+            	<input type="hidden" th:field="*{id}" />
+                <div class="border border-secondary rounded p-3">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Category Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="name" class="form-control" th:field="*{name}" required
+                               minlength="3"
+                               maxlength="128"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Alias:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" th:field="*{alias}" required
+                               minlength="3"
+                               maxlength="64"/>
+                        </div>
+                    </div>
+                    
+					<div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Image:</label>
+                        <div class="col-sm-8" style="padding: 8px 0 0 23px;">
+                        	<input type="hidden" th:field="*{image}" />
+                            <input th:if="${category.getImage == null}" type="file" id="fileImage" name="profile-image" accept="image/png, image/jpg, image/jpeg"
+                            		class="mb-2" required/>
+                    		<input th:if="${category.getImage != null}" type="file" id="fileImage" name="profile-image" accept="image/png, image/jpg, image/jpeg"
+                    				class="mb-2"/>
+                            <image id="thumbnail" alt="Photo" th:src="@{${category.getImagePath}}"
+                            		class="image-fluid" style="max-width: 100px" />
+                        </div>
+                    </div>
+
+					<div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Parent Category:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" th:field="*{parent}">
+                            	<option value="0">[No Parent]</option>
+                            	<th:block th:each="category : ${listCategoriesForm}">
+                            		<option th:value="${category.id}">[[${category.name}]]</option>
+                            	</th:block>
+                            </select>
+                        </div>
+                    </div>
+				
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" style="padding-left: 5%">Enabled:</label>
+                        <div class="col-sm-8" style="padding: 8px 0 0 23px;">
+                            <input type="checkbox" th:field="*{enabled}" />
+                        </div>
+                    </div>
+                    
+                    
+
+                    <div class="text-center">
+                        <input type="submit" value="Save" class="btn btn-primary m-3" />
+                        <input type="button" value="Cancel" class="btn btn-secondary" onclick="handleCancel()"/>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="text-center">
+                <p>Shoppr Control Panel - Copyright &copy; Shoppr</p>
+            </div>
+        </div>
+       
+       
+        <script type="text/javascript">
+        	
+        	checkCategoryUrl="[[@{/categories/check_name}]]"
+        	
+        	function handleCancel(){
+			    window.location = "[[@{/categories}]]"
+			}
+			
+        </script>
+        <script type="text/javascript" th:src="@{/js/common_form.js}"></script>
+    </body>
+</html>
